@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Android</string>
+    <string name="action_submit">Get</string>
 </resources>
