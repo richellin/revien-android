@@ -1,6 +1,5 @@
-package richellin.revien.android.Model;
+package richellin.revien.android.model;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -9,10 +8,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class Sentence {
     @SerializedName("ko")
-    @Expose
+    //@Expose
     private String ko;
     @SerializedName("en")
-    @Expose
+    //@Expose
     private String en;
 
     public String getKo() {
