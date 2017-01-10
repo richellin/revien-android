@@ -31,6 +31,12 @@ public class RevienActivity extends AppCompatActivity implements RevianViewModel
         initDataBinding();
         setSupportActionBar(revienActivityBinding.toolbar);
         setupListSentenceView(revienActivityBinding.listSentence);
+
+        initialize();
+    }
+
+    private void initialize() {
+        revienViewModel.initialize();
     }
 
     private void initDataBinding() {

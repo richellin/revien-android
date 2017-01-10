@@ -2,11 +2,13 @@ package richellin.revien.android.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+
 /**
  * Created by LEESANGJUN on 2017/01/08.
  */
 
-public class Sentence {
+public class Sentence extends RealmObject {
     @SerializedName("ko")
     //@Expose
     private String ko;
