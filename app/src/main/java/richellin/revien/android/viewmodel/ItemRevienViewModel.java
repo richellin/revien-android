@@ -16,7 +16,7 @@ public class ItemRevienViewModel extends BaseObservable {
     private Sentence sentence;
     private Context context;
 
-    public final ObservableInt enLabel = new ObservableInt(View.GONE);
+    public ObservableInt enLabel = new ObservableInt(View.GONE);
 
     public ItemRevienViewModel(Sentence sentence, Context context) {
         this.sentence = sentence;
@@ -39,7 +39,6 @@ public class ItemRevienViewModel extends BaseObservable {
         } else {
             enLabel.set(View.GONE);
         }
-        //context.startActivity(SentenceDetailActivity.launchDetail(view.getContext(), sentence));
     }
 
     public void setSentence(Sentence sentence) {

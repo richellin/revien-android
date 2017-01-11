@@ -4,7 +4,6 @@ import android.content.Context;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 
 import com.google.gson.Gson;
@@ -66,11 +65,23 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
     }
 
 
-    //It is "public" to show an example of test
     public void initializeViews() {
         revienLabel.set(View.GONE);
         revienList.set(View.GONE);
         revienProgress.set(View.VISIBLE);
+    }
+
+    public void endedViews() {
+        revienLabel.set(View.GONE);
+        revienList.set(View.VISIBLE);
+        revienProgress.set(View.GONE);
+    }
+
+    public void emptyViews() {
+        messageLabel.set(context.getString(R.string.error_loading_sentence));
+        revienLabel.set(View.VISIBLE);
+        revienList.set(View.GONE);
+        revienProgress.set(View.GONE);
     }
     
     private void getSentenceList() {
@@ -79,43 +90,23 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
 
         RevienService revienService = revienApplication.getRevienService();
 
-        DateFormat df = new SimpleDateFormat("yyyyMMdd", Locale.US);
-        df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
-
-        Calendar cal = Calendar.getInstance();
-
-        try {
-            cal.setTime(df.parse(df.format(new Date())));
-            cal.add(Calendar.DATE, -1);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        String currentTime = df.format(cal.getTime());
+        int currentTime = getCurrentTime();
 
         Realm realm = Realm.getDefaultInstance();
 
         // Get a Realm instance for this thread
-        Today todaySentences = realm.where(Today.class).equalTo("date",Integer.parseInt(currentTime)).findFirst();
+        Today todaySentences = realm.where(Today.class).equalTo("date",currentTime).findFirst();
 
         if (todaySentences != null) {
             sentences = todaySentences.getSentences();
-
-            Log.d("main1!!", "size : "+sentences.size()); // => 0 because no dogs have been added to the Realm yet
-
-            revienProgress.set(View.GONE);
-            revienLabel.set(View.GONE);
-            revienList.set(View.VISIBLE);
+            endedViews();
             mainView.loadData(sentences);
         } else {
-            subscription = revienService.getSentence(Integer.parseInt(currentTime))
+            subscription = revienService.getSentence(currentTime)
                 .subscribeOn(revienApplication.subscribeScheduler())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((jsonObject) -> {
-                    revienProgress.set(View.GONE);
-                    revienLabel.set(View.GONE);
-                    revienList.set(View.VISIBLE);
+                    endedViews();
                     if (mainView != null) {
                         // Persist your data in a transaction
                         realm.beginTransaction();
@@ -130,10 +121,7 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
                     }
                 }, (throwable) -> {
                         throwable.printStackTrace();
-                        messageLabel.set(context.getString(R.string.error_loading_sentence));
-                        revienProgress.set(View.GONE);
-                        revienLabel.set(View.VISIBLE);
-                        revienList.set(View.GONE);
+                        emptyViews();
                     }
                 );
         }
@@ -154,5 +142,24 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
         subscription = null;
         context = null;
         mainView = null;
+    }
+
+    private int getCurrentTime() {
+        DateFormat df = new SimpleDateFormat("yyyyMMdd", Locale.US);
+        df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
+
+        Calendar cal = Calendar.getInstance();
+
+        try {
+            cal.setTime(df.parse(df.format(new Date())));
+            cal.add(Calendar.DATE, -1);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        String currentTime = df.format(cal.getTime());
+
+        return Integer.parseInt(currentTime);
     }
 }

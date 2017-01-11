@@ -64,8 +64,8 @@ public class RevienActivity extends AppCompatActivity implements RevianViewModel
 
     @Override
     public void loadData(List<Sentence> sentences) {
-        SentenceAdapter peopleAdapter = (SentenceAdapter) revienActivityBinding.listSentence.getAdapter();
-        peopleAdapter.setSentenceList(sentences);
+        SentenceAdapter sentenceAdapter = (SentenceAdapter) revienActivityBinding.listSentence.getAdapter();
+        sentenceAdapter.setSentenceList(sentences);
     }
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
