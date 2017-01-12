@@ -15,12 +15,15 @@ import richellin.revien.android.model.Sentence;
 public class ItemRevienViewModel extends BaseObservable {
     private Sentence sentence;
     private Context context;
+    private int visible;
 
-    public ObservableInt enLabel = new ObservableInt(View.GONE);
+    public ObservableInt enLabel;
 
-    public ItemRevienViewModel(Sentence sentence, Context context) {
+    public ItemRevienViewModel(Sentence sentence, Context context, int visible) {
         this.sentence = sentence;
         this.context = context;
+        this.visible = visible;
+        enLabel = new ObservableInt(visible == 0?View.GONE:View.VISIBLE);
     }
 
     @Bindable
@@ -33,16 +36,19 @@ public class ItemRevienViewModel extends BaseObservable {
         return sentence.getKo();
     }
 
-    public void onItemClick(View view) {
-        if (enLabel.get() == View.GONE) {
-            enLabel.set(View.VISIBLE);
-        } else {
+
+    public void fetchVisible() {
+        if (visible == 0) {
             enLabel.set(View.GONE);
+        } else {
+            enLabel.set(View.VISIBLE);
         }
     }
 
-    public void setSentence(Sentence sentence) {
+    public void setSentence(Sentence sentence,int visible) {
         this.sentence = sentence;
+        this.visible = visible;
+        fetchVisible();
         notifyChange();
     }
 }

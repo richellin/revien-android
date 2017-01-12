@@ -22,8 +22,8 @@ import io.realm.Realm;
 import richellin.revien.android.R;
 import richellin.revien.android.RevienApplication;
 import richellin.revien.android.data.RevienService;
+import richellin.revien.android.model.Daily;
 import richellin.revien.android.model.Sentence;
-import richellin.revien.android.model.Today;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -95,10 +95,10 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
         Realm realm = Realm.getDefaultInstance();
 
         // Get a Realm instance for this thread
-        Today todaySentences = realm.where(Today.class).equalTo("date",currentTime).findFirst();
+        Daily dailySentences = realm.where(Daily.class).equalTo("date",currentTime).findFirst();
 
-        if (todaySentences != null) {
-            sentences = todaySentences.getSentences();
+        if (dailySentences != null) {
+            sentences = dailySentences.getSentences();
             endedViews();
             mainView.loadData(sentences);
         } else {
@@ -110,11 +110,11 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
                     if (mainView != null) {
                         // Persist your data in a transaction
                         realm.beginTransaction();
-                        Today today = realm.createObject(Today.class, currentTime); // Create managed objects directly
+                        Daily daily = realm.createObject(Daily.class, currentTime); // Create managed objects directly
                         for (int i = 0; i < jsonObject.size(); i++) {
                             Sentence sentence = new Gson().fromJson(jsonObject.get(String.valueOf(i)).toString(), Sentence.class);
                             sentences.add(sentence);
-                            today.getSentences().add(realm.copyToRealm(sentence));// Persist unmanaged objects
+                            daily.getSentences().add(realm.copyToRealm(sentence));// Persist unmanaged objects
                         }
                         realm.commitTransaction();
                         mainView.loadData(sentences);

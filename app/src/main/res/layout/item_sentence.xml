@@ -3,21 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
   <data>
-
     <variable
         name="sentenceViewModel"
         type="richellin.revien.android.viewmodel.ItemRevienViewModel"/>
   </data>
-
 
   <RelativeLayout
       android:id="@+id/item_sentence"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="?attr/selectableItemBackground"
-      android:onClick="@{sentenceViewModel::onItemClick}"
       android:padding="@dimen/spacing_large">
-
 
     <TextView
         android:id="@+id/label_en"
@@ -29,7 +25,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         tools:text="english"
-        app:visibility="@{sentenceViewModel.enLabel}"/>
+        android:visibility="@{sentenceViewModel.enLabel}"/>
 
     <TextView
         android:id="@+id/label_ko"
