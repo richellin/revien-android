@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 import richellin.revien.android.R;
 import richellin.revien.android.RevienApplication;
 import richellin.revien.android.data.RevienService;
@@ -31,7 +32,8 @@ import rx.android.schedulers.AndroidSchedulers;
  * Created by LEESANGJUN on 2017/01/09.
  */
 
-public class RevienViewModel implements RevianViewModelContract.ViewModel  {
+public class RevienViewModel implements RevianViewModelContract.ViewModel {
+    final private int REVEN_DAY = -7;
     public ObservableInt revienProgress;
     public ObservableInt revienList;
     public ObservableInt revienLabel;
@@ -41,7 +43,9 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
     private Context context;
     private Subscription subscription;
 
-    private List<Sentence> sentences = new ArrayList<>();
+    private List<Sentence> sentences;
+
+    private Realm realm;
 
     public RevienViewModel(@NonNull RevianViewModelContract.MainView mainView,
                            @NonNull Context context) {
@@ -52,9 +56,13 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
         revienList = new ObservableInt(View.GONE);
         revienLabel = new ObservableInt(View.VISIBLE);
         messageLabel = new ObservableField<>(context.getString(R.string.default_loading_sentence));
+        sentences = new ArrayList<>();
+
+        realm = Realm.getDefaultInstance();
     }
 
     public void initialize() {
+        delDaily(getDiffDate(REVEN_DAY));
         initializeViews();
         getSentenceList();
     }
@@ -90,19 +98,23 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
 
         RevienService revienService = revienApplication.getRevienService();
 
-        int currentTime = getCurrentTime();
 
-        Realm realm = Realm.getDefaultInstance();
+        int endDate = getDiffDate(-1);
 
-        // Get a Realm instance for this thread
-        Daily dailySentences = realm.where(Daily.class).equalTo("date",currentTime).findFirst();
+        final RealmResults<Daily> dailies = getDailies(endDate);
+        final Daily checkDaily = realm.where(Daily.class).equalTo("date",endDate).findFirst();
 
-        if (dailySentences != null) {
-            sentences = dailySentences.getSentences();
+        if (checkDaily != null) {
+            for (Daily daily: dailies) {
+                List<Sentence> tmp = daily.getSentences();
+                for (Sentence sentence: tmp) {
+                    sentences.add(sentence);
+                }
+            }
             endedViews();
             mainView.loadData(sentences);
         } else {
-            subscription = revienService.getSentence(currentTime)
+            subscription = revienService.getSentence(endDate)
                 .subscribeOn(revienApplication.subscribeScheduler())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((jsonObject) -> {
@@ -110,7 +122,7 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
                     if (mainView != null) {
                         // Persist your data in a transaction
                         realm.beginTransaction();
-                        Daily daily = realm.createObject(Daily.class, currentTime); // Create managed objects directly
+                        Daily daily = realm.createObject(Daily.class, endDate); // Create managed objects directly
                         for (int i = 0; i < jsonObject.size(); i++) {
                             Sentence sentence = new Gson().fromJson(jsonObject.get(String.valueOf(i)).toString(), Sentence.class);
                             sentences.add(sentence);
@@ -144,7 +156,7 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
         mainView = null;
     }
 
-    private int getCurrentTime() {
+    private int getDiffDate(int diff) {
         DateFormat df = new SimpleDateFormat("yyyyMMdd", Locale.US);
         df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
 
@@ -152,14 +164,26 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel  {
 
         try {
             cal.setTime(df.parse(df.format(new Date())));
-            cal.add(Calendar.DATE, -1);
+            cal.add(Calendar.DATE, diff);
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        String currentTime = df.format(cal.getTime());
+        String endDate = df.format(cal.getTime());
 
-        return Integer.parseInt(currentTime);
+        return Integer.parseInt(endDate);
+    }
+
+    private RealmResults<Daily> getDailies(int date) {
+        return realm.where(Daily.class).lessThanOrEqualTo("date",date).findAll();
+    }
+
+    private void delDaily(int date) {
+        final RealmResults<Daily> dailies = realm.where(Daily.class).lessThanOrEqualTo("date",date).findAll();
+        realm.executeTransaction((r)-> {
+                dailies.deleteAllFromRealm();
+            }
+        );
     }
 }
