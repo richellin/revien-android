@@ -1,4 +1,4 @@
-package richellin.revien.android.modelTest;
+package richellin.revien.android.model;
 
 import com.google.gson.annotations.SerializedName;
 
