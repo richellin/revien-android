@@ -22,7 +22,3 @@ Libraries used on the this project
 [8]: http://robolectric.org/
 [9]: http://mockito.org/
 
-Developed By
-------------
-
-* Sangjun Lee - <richellin7@gmail.com>
