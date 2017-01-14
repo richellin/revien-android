@@ -4,7 +4,7 @@ import android.os.Build;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
  * https://github.com/robolectric/robolectric/issues/1648
  **/
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
 public class ItemRevienViewModelTest {
   private static final String SENTENCE_KO_TEST = "안녕하세요, 반갑습니다.";
