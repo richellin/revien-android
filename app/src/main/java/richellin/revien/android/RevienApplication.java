@@ -10,7 +10,7 @@ import rx.Scheduler;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by LEESANGJUN on 2017/01/09.
+ * Created by richellin on 2017/01/09.
  */
 
 public class RevienApplication extends Application {

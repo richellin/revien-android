@@ -5,7 +5,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by LEESANGJUN on 2017/01/11.
+ * Created by richellin on 2017/01/11.
  */
 
 public class Daily extends RealmObject {

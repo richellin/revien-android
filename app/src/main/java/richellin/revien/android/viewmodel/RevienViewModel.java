@@ -29,7 +29,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
- * Created by LEESANGJUN on 2017/01/09.
+ * Created by richellin on 2017/01/09.
  */
 
 public class RevienViewModel implements RevianViewModelContract.ViewModel {
@@ -98,8 +98,8 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel {
 
         RevienService revienService = revienApplication.getRevienService();
 
-
         int endDate = getDiffDate(-1);
+        int week = getDayOfWeek(endDate);
 
         final RealmResults<Daily> dailies = getDailies(endDate);
         final Daily checkDaily = realm.where(Daily.class).equalTo("date",endDate).findFirst();
@@ -114,7 +114,9 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel {
             endedViews();
             mainView.loadData(sentences);
         } else {
-            subscription = revienService.getSentence(endDate)
+            // Don't get one Sunday
+            if (week != 1){
+                subscription = revienService.getSentence(endDate)
                 .subscribeOn(revienApplication.subscribeScheduler())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((jsonObject) -> {
@@ -136,6 +138,7 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel {
                         emptyViews();
                     }
                 );
+            }
         }
     }
 
@@ -154,6 +157,23 @@ public class RevienViewModel implements RevianViewModelContract.ViewModel {
         subscription = null;
         context = null;
         mainView = null;
+    }
+
+    private int getDayOfWeek(int input) {
+        int week = 0;
+        DateFormat df = new SimpleDateFormat("yyyyMMdd", Locale.US);
+        df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
+
+        Calendar cal = Calendar.getInstance();
+
+        try {
+            cal.setTime(df.parse(String.valueOf(input)));
+            week = cal.get(Calendar.DAY_OF_WEEK);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return week;
     }
 
     private int getDiffDate(int diff) {

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import io.realm.RealmObject;
 
 /**
- * Created by LEESANGJUN on 2017/01/08.
+ * Created by richellin on 2017/01/08.
  */
 
 public class Sentence extends RealmObject {

@@ -7,7 +7,7 @@ import java.util.List;
 import richellin.revien.android.model.Sentence;
 
 /**
- * Created by LEESANGJUN on 2017/01/09.
+ * Created by richellin on 2017/01/09.
  */
 
 public class RevianViewModelContract {

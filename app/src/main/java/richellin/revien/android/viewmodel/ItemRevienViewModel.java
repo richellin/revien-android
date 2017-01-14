@@ -9,7 +9,7 @@ import android.view.View;
 import richellin.revien.android.model.Sentence;
 
 /**
- * Created by LEESANGJUN on 2017/01/09.
+ * Created by richellin on 2017/01/09.
  */
 
 public class ItemRevienViewModel extends BaseObservable {

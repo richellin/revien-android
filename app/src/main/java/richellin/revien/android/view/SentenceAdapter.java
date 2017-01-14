@@ -16,7 +16,7 @@ import richellin.revien.android.model.Sentence;
 import richellin.revien.android.viewmodel.ItemRevienViewModel;
 
 /**
- * Created by LEESANGJUN on 2017/01/09.
+ * Created by richellin on 2017/01/09.
  */
 
 public class SentenceAdapter extends RecyclerView.Adapter<SentenceAdapter.SentenceAdapterViewHolder> {
