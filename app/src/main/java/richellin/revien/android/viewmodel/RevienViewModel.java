@@ -32,178 +32,178 @@ import rx.android.schedulers.AndroidSchedulers;
  * Created by richellin on 2017/01/09.
  */
 
-public class RevienViewModel implements RevianViewModelContract.ViewModel {
-    final private int REVEN_DAY = -7;
-    public ObservableInt revienProgress;
-    public ObservableInt revienList;
-    public ObservableInt revienLabel;
-    public ObservableField<String> messageLabel;
+public class RevienViewModel implements RevienViewModelContract.ViewModel {
+  final private int REVEN_DAY = -7;
+  public ObservableInt revienProgress;
+  public ObservableInt revienList;
+  public ObservableInt revienLabel;
+  public ObservableField<String> messageLabel;
 
-    private RevianViewModelContract.MainView mainView;
-    private Context context;
-    private Subscription subscription;
+  private RevienViewModelContract.MainView mainView;
+  private Context context;
+  private Subscription subscription;
 
-    private List<Sentence> sentences;
+  private List<Sentence> sentences;
 
-    private Realm realm;
+  private Realm realm;
 
-    public RevienViewModel(@NonNull RevianViewModelContract.MainView mainView,
-                           @NonNull Context context) {
+  public RevienViewModel(@NonNull RevienViewModelContract.MainView mainView,
+      @NonNull Context context) {
 
-        this.mainView = mainView;
-        this.context = context;
-        revienProgress = new ObservableInt(View.GONE);
-        revienList = new ObservableInt(View.GONE);
-        revienLabel = new ObservableInt(View.VISIBLE);
-        messageLabel = new ObservableField<>(context.getString(R.string.default_loading_sentence));
-        sentences = new ArrayList<>();
+    this.mainView = mainView;
+    this.context = context;
+    revienProgress = new ObservableInt(View.GONE);
+    revienList = new ObservableInt(View.GONE);
+    revienLabel = new ObservableInt(View.VISIBLE);
+    messageLabel = new ObservableField<>(context.getString(R.string.default_loading_sentence));
+    sentences = new ArrayList<>();
 
-        realm = Realm.getDefaultInstance();
-    }
+    realm = Realm.getDefaultInstance();
+  }
 
-    public void initialize() {
-        delDaily(getDiffDate(REVEN_DAY));
-        initializeViews();
-        getSentenceList();
-    }
+  public void initialize() {
+    delDaily(getDiffDate(REVEN_DAY));
+    initializeViews();
+    getSentenceList();
+  }
 
-    public void onClickFabLoad(View view) {
-        initializeViews();
-        getSentenceList();
-    }
+  public void onClickFabLoad(View view) {
+    initializeViews();
+    getSentenceList();
+  }
 
+  public void initializeViews() {
+    revienLabel.set(View.GONE);
+    revienList.set(View.GONE);
+    revienProgress.set(View.VISIBLE);
+  }
 
-    public void initializeViews() {
-        revienLabel.set(View.GONE);
-        revienList.set(View.GONE);
-        revienProgress.set(View.VISIBLE);
-    }
+  public void endedViews() {
+    revienLabel.set(View.GONE);
+    revienList.set(View.VISIBLE);
+    revienProgress.set(View.GONE);
+  }
 
-    public void endedViews() {
-        revienLabel.set(View.GONE);
-        revienList.set(View.VISIBLE);
-        revienProgress.set(View.GONE);
-    }
+  public void emptyViews() {
+    messageLabel.set(context.getString(R.string.error_loading_sentence));
+    revienLabel.set(View.VISIBLE);
+    revienList.set(View.GONE);
+    revienProgress.set(View.GONE);
+  }
 
-    public void emptyViews() {
-        messageLabel.set(context.getString(R.string.error_loading_sentence));
-        revienLabel.set(View.VISIBLE);
-        revienList.set(View.GONE);
-        revienProgress.set(View.GONE);
-    }
-    
-    private void getSentenceList() {
-        unSubscribeFromObservable();
-        RevienApplication revienApplication = RevienApplication.create(context);
+  private void getSentenceList() {
+    unSubscribeFromObservable();
+    RevienApplication revienApplication = RevienApplication.create(context);
 
-        RevienService revienService = revienApplication.getRevienService();
+    RevienService revienService = revienApplication.getRevienService();
 
-        int endDate = getDiffDate(-1);
-        int week = getDayOfWeek(endDate);
+    int endDate = getDiffDate(-1);
+    int week = getDayOfWeek(endDate);
 
-        final RealmResults<Daily> dailies = getDailies(endDate);
-        final Daily checkDaily = realm.where(Daily.class).equalTo("date",endDate).findFirst();
+    final RealmResults<Daily> dailies = getDailies(endDate);
+    final Daily checkDaily = realm.where(Daily.class).equalTo("date", endDate).findFirst();
 
-        if (checkDaily != null) {
-            for (Daily daily: dailies) {
-                List<Sentence> tmp = daily.getSentences();
-                for (Sentence sentence: tmp) {
-                    sentences.add(sentence);
+    if (checkDaily != null) {
+      for (Daily daily : dailies) {
+        List<Sentence> tmp = daily.getSentences();
+        for (Sentence sentence : tmp) {
+          sentences.add(sentence);
+        }
+      }
+      endedViews();
+      mainView.loadData(sentences);
+    } else {
+      // Don't get one Sunday
+      if (week != 1) {
+        subscription = revienService.getSentence(endDate)
+            .subscribeOn(revienApplication.subscribeScheduler())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe((jsonObject) -> {
+              endedViews();
+              if (mainView != null) {
+                // Persist your data in a transaction
+                realm.beginTransaction();
+                Daily daily =
+                    realm.createObject(Daily.class, endDate); // Create managed objects directly
+                for (int i = 0; i < jsonObject.size(); i++) {
+                  Sentence sentence =
+                      new Gson().fromJson(jsonObject.get(String.valueOf(i)).toString(),
+                          Sentence.class);
+                  sentences.add(sentence);
+                  daily.getSentences().add(realm.copyToRealm(sentence));// Persist unmanaged objects
                 }
-            }
-            endedViews();
-            mainView.loadData(sentences);
-        } else {
-            // Don't get one Sunday
-            if (week != 1){
-                subscription = revienService.getSentence(endDate)
-                .subscribeOn(revienApplication.subscribeScheduler())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((jsonObject) -> {
-                    endedViews();
-                    if (mainView != null) {
-                        // Persist your data in a transaction
-                        realm.beginTransaction();
-                        Daily daily = realm.createObject(Daily.class, endDate); // Create managed objects directly
-                        for (int i = 0; i < jsonObject.size(); i++) {
-                            Sentence sentence = new Gson().fromJson(jsonObject.get(String.valueOf(i)).toString(), Sentence.class);
-                            sentences.add(sentence);
-                            daily.getSentences().add(realm.copyToRealm(sentence));// Persist unmanaged objects
-                        }
-                        realm.commitTransaction();
-                        mainView.loadData(sentences);
-                    }
-                }, (throwable) -> {
-                        throwable.printStackTrace();
-                        emptyViews();
-                    }
-                );
-            }
-        }
+                realm.commitTransaction();
+                mainView.loadData(sentences);
+              }
+            }, (throwable) -> {
+              throwable.printStackTrace();
+              emptyViews();
+            });
+      }
+    }
+  }
+
+  private void unSubscribeFromObservable() {
+    if (subscription != null && !subscription.isUnsubscribed()) {
+      subscription.unsubscribe();
+    }
+  }
+
+  @Override public void destroy() {
+    reset();
+  }
+
+  private void reset() {
+    unSubscribeFromObservable();
+    subscription = null;
+    context = null;
+    mainView = null;
+  }
+
+  private int getDayOfWeek(int input) {
+    int week = 0;
+    DateFormat df = new SimpleDateFormat("yyyyMMdd", Locale.US);
+    df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
+
+    Calendar cal = Calendar.getInstance();
+
+    try {
+      cal.setTime(df.parse(String.valueOf(input)));
+      week = cal.get(Calendar.DAY_OF_WEEK);
+    } catch (ParseException e) {
+      e.printStackTrace();
     }
 
-    private void unSubscribeFromObservable() {
-        if (subscription != null && !subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
-        }
+    return week;
+  }
+
+  private int getDiffDate(int diff) {
+    DateFormat df = new SimpleDateFormat("yyyyMMdd", Locale.US);
+    df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
+
+    Calendar cal = Calendar.getInstance();
+
+    try {
+      cal.setTime(df.parse(df.format(new Date())));
+      cal.add(Calendar.DATE, diff);
+    } catch (ParseException e) {
+      e.printStackTrace();
     }
 
-    @Override public void destroy() {
-        reset();
-    }
+    String endDate = df.format(cal.getTime());
 
-    private void reset() {
-        unSubscribeFromObservable();
-        subscription = null;
-        context = null;
-        mainView = null;
-    }
+    return Integer.parseInt(endDate);
+  }
 
-    private int getDayOfWeek(int input) {
-        int week = 0;
-        DateFormat df = new SimpleDateFormat("yyyyMMdd", Locale.US);
-        df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
+  private RealmResults<Daily> getDailies(int date) {
+    return realm.where(Daily.class).lessThanOrEqualTo("date", date).findAll();
+  }
 
-        Calendar cal = Calendar.getInstance();
-
-        try {
-            cal.setTime(df.parse(String.valueOf(input)));
-            week = cal.get(Calendar.DAY_OF_WEEK);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return week;
-    }
-
-    private int getDiffDate(int diff) {
-        DateFormat df = new SimpleDateFormat("yyyyMMdd", Locale.US);
-        df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
-
-        Calendar cal = Calendar.getInstance();
-
-        try {
-            cal.setTime(df.parse(df.format(new Date())));
-            cal.add(Calendar.DATE, diff);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        String endDate = df.format(cal.getTime());
-
-        return Integer.parseInt(endDate);
-    }
-
-    private RealmResults<Daily> getDailies(int date) {
-        return realm.where(Daily.class).lessThanOrEqualTo("date",date).findAll();
-    }
-
-    private void delDaily(int date) {
-        final RealmResults<Daily> dailies = realm.where(Daily.class).lessThanOrEqualTo("date",date).findAll();
-        realm.executeTransaction((r)-> {
-                dailies.deleteAllFromRealm();
-            }
-        );
-    }
+  private void delDaily(int date) {
+    final RealmResults<Daily> dailies =
+        realm.where(Daily.class).lessThanOrEqualTo("date", date).findAll();
+    realm.executeTransaction((r) -> {
+      dailies.deleteAllFromRealm();
+    });
+  }
 }
