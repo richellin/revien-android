@@ -1,5 +1,6 @@
 package richellin.revien.android;
 
+import android.os.Build;
 import android.view.View;
 
 import org.junit.Before;
@@ -41,7 +42,7 @@ import static org.mockito.Mockito.doReturn;
  **/
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21, manifest = Config.NONE)
+@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP, manifest = Config.NONE)
 public class RevienModelViewTest {
 
   private static final int DATE_TEST = 20170114;
