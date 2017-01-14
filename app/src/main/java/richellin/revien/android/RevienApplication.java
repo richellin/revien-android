@@ -14,41 +14,40 @@ import rx.schedulers.Schedulers;
  */
 
 public class RevienApplication extends Application {
-    private RevienService revienService;
-    private Scheduler scheduler;
+  private RevienService revienService;
+  private Scheduler scheduler;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        // Initialize Realm
-        Realm.init(getApplicationContext());
-    }
+  @Override public void onCreate() {
+    super.onCreate();
+    // Initialize Realm
+    Realm.init(getApplicationContext());
+  }
 
-    private static RevienApplication get(Context context) {
-        return (RevienApplication) context.getApplicationContext();
-    }
+  private static RevienApplication get(Context context) {
+    return (RevienApplication) context.getApplicationContext();
+  }
 
-    public static RevienApplication create(Context context) {
-        return RevienApplication.get(context);
-    }
+  public static RevienApplication create(Context context) {
+    return RevienApplication.get(context);
+  }
 
-    public RevienService getRevienService() {
-        if (revienService == null) revienService = RevienFactory.create();
+  public RevienService getRevienService() {
+    if (revienService == null) revienService = RevienFactory.create();
 
-        return revienService;
-    }
+    return revienService;
+  }
 
-    public Scheduler subscribeScheduler() {
-        if (scheduler == null) scheduler = Schedulers.io();
+  public Scheduler subscribeScheduler() {
+    if (scheduler == null) scheduler = Schedulers.io();
 
-        return scheduler;
-    }
+    return scheduler;
+  }
 
-    public void setRevienService(RevienService revienService) {
-        this.revienService = revienService;
-    }
+  public void setRevienService(RevienService revienService) {
+    this.revienService = revienService;
+  }
 
-    public void setScheduler(Scheduler scheduler) {
-        this.scheduler = scheduler;
-    }
+  public void setScheduler(Scheduler scheduler) {
+    this.scheduler = scheduler;
+  }
 }

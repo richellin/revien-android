@@ -9,14 +9,14 @@ import richellin.revien.android.model.Sentence;
  */
 
 public class RevienResponse {
-    //@SerializedName("results")
-    private List<Sentence> sentenceList;
+  //@SerializedName("results")
+  private List<Sentence> sentenceList;
 
-    public List<Sentence> getSentenceList() {
-        return sentenceList;
-    }
+  public List<Sentence> getSentenceList() {
+    return sentenceList;
+  }
 
-    public void setSentenceList(List<Sentence> mSentenceList) {
-        this.sentenceList = mSentenceList;
-    }
+  public void setSentenceList(List<Sentence> mSentenceList) {
+    this.sentenceList = mSentenceList;
+  }
 }

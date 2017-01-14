@@ -12,32 +12,9 @@ import rx.Observable;
  */
 
 public interface RevienService {
-    @Headers({
-            "Accept: application/json"
-    })
+  @Headers({
+      "Accept: application/json"
+  })
 
-
-    @GET("Prod/resource/{date}")
-    Observable<JsonObject> getSentence(
-            @Path("date") int date
-    );
-
-    /*
-    @GET("Prod/resource/{date}")
-    Observable<RevienResponse> getSentence(
-            @Path("date") int date
-    );
-    */
-
-    /*
-    @GET("Prod/resource/{date}")
-    Call<List<Sentence>> getSentence(
-            @Path("date") int date
-    );
-
-    @GET("Prod/resource/{date}")
-    Call<Sentences> getSentence(
-            @Path("date") int date
-    );
-    */
+  @GET("Prod/resource/{date}") Observable<JsonObject> getSentence(@Path("date") int date);
 }

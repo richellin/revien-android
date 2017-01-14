@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">Revien</string>
-    <string name="action_submit">Get</string>
+  <string name="app_name">Revien</string>
+  <string name="action_submit">Get</string>
 
-    <string name="action_github">Github</string>
+  <string name="action_github">Github</string>
 
-    <string name="error_loading_sentence">There seems to have been some error.</string>
-    <string name="default_loading_sentence">Press the button to load sentence!</string>
+  <string name="error_loading_sentence">There seems to have been some error.</string>
+  <string name="default_loading_sentence">Press the button to load sentence!</string>
 </resources>

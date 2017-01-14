@@ -9,11 +9,10 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class Daily extends RealmObject {
-    @PrimaryKey
-    private long date;
-    private RealmList<Sentence> sentences; // Declare one-to-many relationships
+  @PrimaryKey private long date;
+  private RealmList<Sentence> sentences; // Declare one-to-many relationships
 
-    public RealmList<Sentence> getSentences() {
-        return sentences;
-    }
+  public RealmList<Sentence> getSentences() {
+    return sentences;
+  }
 }

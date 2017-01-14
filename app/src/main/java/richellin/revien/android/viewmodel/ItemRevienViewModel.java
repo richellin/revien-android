@@ -13,42 +13,43 @@ import richellin.revien.android.model.Sentence;
  */
 
 public class ItemRevienViewModel extends BaseObservable {
-    private Sentence sentence;
-    private Context context;
-    private int visible;
+  private Sentence sentence;
+  private Context context;
+  private int visible;
 
-    public ObservableInt enLabel;
+  public ObservableInt enLabel;
 
-    public ItemRevienViewModel(Sentence sentence, Context context, int visible) {
-        this.sentence = sentence;
-        this.context = context;
-        this.visible = visible;
-        enLabel = new ObservableInt(visible == 0?View.GONE:View.VISIBLE);
+  public ItemRevienViewModel(Sentence sentence, Context context) {
+    this(sentence, context, 0);
+  }
+
+  public ItemRevienViewModel(Sentence sentence, Context context, int visible) {
+    this.sentence = sentence;
+    this.context = context;
+    this.visible = visible;
+    enLabel = new ObservableInt(visible == 0 ? View.GONE : View.VISIBLE);
+  }
+
+  @Bindable public String getEn() {
+    return sentence.getEn();
+  }
+
+  @Bindable public String getKo() {
+    return sentence.getKo();
+  }
+
+  public void fetchVisible() {
+    if (visible == 0) {
+      enLabel.set(View.GONE);
+    } else {
+      enLabel.set(View.VISIBLE);
     }
+  }
 
-    @Bindable
-    public String getEn() {
-         return sentence.getEn();
-    }
-
-    @Bindable
-    public String getKo() {
-        return sentence.getKo();
-    }
-
-
-    public void fetchVisible() {
-        if (visible == 0) {
-            enLabel.set(View.GONE);
-        } else {
-            enLabel.set(View.VISIBLE);
-        }
-    }
-
-    public void setSentence(Sentence sentence,int visible) {
-        this.sentence = sentence;
-        this.visible = visible;
-        fetchVisible();
-        notifyChange();
-    }
+  public void setSentence(Sentence sentence, int visible) {
+    this.sentence = sentence;
+    this.visible = visible;
+    fetchVisible();
+    notifyChange();
+  }
 }

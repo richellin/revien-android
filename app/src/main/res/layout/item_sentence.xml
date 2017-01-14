@@ -1,11 +1,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    >
 
   <data>
     <variable
         name="sentenceViewModel"
-        type="richellin.revien.android.viewmodel.ItemRevienViewModel"/>
+        type="richellin.revien.android.viewmodel.ItemRevienViewModel"
+        />
   </data>
 
   <RelativeLayout
@@ -13,7 +15,8 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="?attr/selectableItemBackground"
-      android:padding="@dimen/spacing_large">
+      android:padding="@dimen/spacing_large"
+      >
 
     <TextView
         android:id="@+id/label_en"
@@ -25,7 +28,8 @@
         android:textSize="16sp"
         android:textStyle="bold"
         tools:text="english"
-        android:visibility="@{sentenceViewModel.enLabel}"/>
+        android:visibility="@{sentenceViewModel.enLabel}"
+        />
 
     <TextView
         android:id="@+id/label_ko"
@@ -35,7 +39,8 @@
         android:text="@{sentenceViewModel.ko}"
         android:textColor="@android:color/secondary_text_light"
         android:textSize="14sp"
-        tools:text="korean"/>
+        tools:text="korean"
+        />
 
   </RelativeLayout>
 
