@@ -13,8 +13,8 @@ Libraries used on the this project
 * [Junit, Mockito][9]
 
 [1]: https://github.com/erikcaffrey/People-MVVM
-[2]: http://developer.android.com/intl/es/tools/support-library/index.html
-[3]: http://developer.android.com/intl/es/tools/data-binding/guide.html
+[2]: https://developer.android.com/topic/libraries/support-library/packages.html
+[3]: https://developer.android.com/topic/libraries/data-binding/index.html
 [4]: http://square.github.io/retrofit/
 [5]: https://github.com/ReactiveX/RxAndroid
 [6]: https://github.com/evant/gradle-retrolambda
