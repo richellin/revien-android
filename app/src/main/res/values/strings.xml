@@ -1,6 +1,5 @@
 <resources>
   <string name="app_name">Revien</string>
-  <string name="action_submit">Get</string>
 
   <string name="action_github">Github</string>
 
