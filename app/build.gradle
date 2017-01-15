@@ -3,12 +3,12 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
 
 android {
-  compileSdkVersion 24
-  buildToolsVersion "24.0.0"
+  compileSdkVersion 25
+  buildToolsVersion "25.0.2"
   defaultConfig {
     applicationId "richellin.revien.android"
     minSdkVersion 16
-    targetSdkVersion 24
+    targetSdkVersion 25
     versionCode 1
     versionName "1.0"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -27,7 +27,7 @@ android {
     enabled = true
   }
   lintOptions {
-    warning 'InvalidPackage'
+    disable 'InvalidPackage', 'GoogleAppIndexingWarning', 'IconMissingDensityFolder'
   }
   dexOptions {
     javaMaxHeapSize "2g"
@@ -41,9 +41,9 @@ dependencies {
   })
 
   // Support
-  compile 'com.android.support:appcompat-v7:24.1.0'
-  compile 'com.android.support:design:24.1.0'
-  compile 'com.android.support:recyclerview-v7:24.1.0'
+  compile 'com.android.support:appcompat-v7:25.1.0'
+  compile 'com.android.support:design:25.1.0'
+  compile 'com.android.support:recyclerview-v7:25.1.0'
 
   // Retrofit
   compile 'com.squareup.retrofit2:retrofit:2.1.0'
