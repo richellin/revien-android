@@ -25,6 +25,8 @@ import richellin.revien.android.RevienApplication;
 import richellin.revien.android.data.RevienService;
 import richellin.revien.android.model.Daily;
 import richellin.revien.android.model.Sentence;
+import richellin.revien.android.util.Constant;
+import richellin.revien.android.util.SharedPrefUtil;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -47,7 +49,7 @@ public class RevienViewModel implements RevienViewModelContract.ViewModel {
 
   private Realm realm;
 
-  private int isRevers = 0;
+  private int isRevers;
 
   public RevienViewModel(@NonNull RevienViewModelContract.MainView mainView,
       @NonNull Context context) {
@@ -61,6 +63,8 @@ public class RevienViewModel implements RevienViewModelContract.ViewModel {
     sentences = new ArrayList<>();
 
     realm = Realm.getDefaultInstance();
+
+    isRevers = SharedPrefUtil.getInt(context, Constant.REVERS);
   }
 
   public void initialize() {
@@ -91,6 +95,7 @@ public class RevienViewModel implements RevienViewModelContract.ViewModel {
     } else {
       isRevers = 0;
     }
+    SharedPrefUtil.setInt(context, Constant.REVERS, isRevers);
   }
 
   public void initializeViews() {
