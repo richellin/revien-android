@@ -47,6 +47,8 @@ public class RevienViewModel implements RevienViewModelContract.ViewModel {
 
   private Realm realm;
 
+  private int isRevers = 0;
+
   public RevienViewModel(@NonNull RevienViewModelContract.MainView mainView,
       @NonNull Context context) {
 
@@ -72,19 +74,38 @@ public class RevienViewModel implements RevienViewModelContract.ViewModel {
     getSentenceList();
   }
 
+  public void onClickRevers(View view) {
+    updateRevers();
+
+    realm.beginTransaction();
+    for (Sentence sentence : sentences) {
+      sentence.revers();
+    }
+    realm.commitTransaction();
+    mainView.loadData(sentences);
+  }
+
+  private void updateRevers() {
+    if (isRevers == 0) {
+      isRevers = 1;
+    } else {
+      isRevers = 0;
+    }
+  }
+
   public void initializeViews() {
     revienLabel.set(View.GONE);
     revienList.set(View.GONE);
     revienProgress.set(View.VISIBLE);
   }
 
-  public void endedViews() {
+  private void endedViews() {
     revienLabel.set(View.GONE);
     revienList.set(View.VISIBLE);
     revienProgress.set(View.GONE);
   }
 
-  public void emptyViews() {
+  private void emptyViews() {
     messageLabel.set(context.getString(R.string.error_loading_sentence));
     revienLabel.set(View.VISIBLE);
     revienList.set(View.GONE);
@@ -129,6 +150,9 @@ public class RevienViewModel implements RevienViewModelContract.ViewModel {
                   Sentence sentence =
                       new Gson().fromJson(jsonObject.get(String.valueOf(i)).toString(),
                           Sentence.class);
+                  if (isRevers == 1) {
+                    sentence.revers();
+                  }
                   sentences.add(sentence);
                   daily.getSentences().add(realm.copyToRealm(sentence));// Persist unmanaged objects
                 }

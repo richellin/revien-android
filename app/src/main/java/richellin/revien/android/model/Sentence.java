@@ -38,4 +38,11 @@ public class Sentence extends RealmObject {
         ", en='" + en +
         '}';
   }
+
+  public void revers() {
+    String tmp = ko;
+    ko = en;
+    en = tmp;
+  }
+
 }
