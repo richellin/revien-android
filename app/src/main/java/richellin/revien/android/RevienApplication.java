@@ -19,8 +19,9 @@ public class RevienApplication extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
+
     // Initialize Realm
-    Realm.init(getApplicationContext());
+    initRealm();
   }
 
   private static RevienApplication get(Context context) {
@@ -49,5 +50,9 @@ public class RevienApplication extends Application {
 
   public void setScheduler(Scheduler scheduler) {
     this.scheduler = scheduler;
+  }
+
+  public void initRealm() {
+    Realm.init(getApplicationContext());
   }
 }

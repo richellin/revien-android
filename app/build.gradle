@@ -4,14 +4,14 @@ apply plugin: 'realm-android'
 
 android {
   compileSdkVersion 25
-  buildToolsVersion "25.0.2"
+  buildToolsVersion '25.0.2'
   defaultConfig {
-    applicationId "richellin.revien.android"
+    applicationId 'richellin.revien.android'
     minSdkVersion 16
     targetSdkVersion 25
     versionCode 1
-    versionName "1.0"
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    versionName '1.0'
+    testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
   }
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
@@ -30,7 +30,7 @@ android {
     disable 'InvalidPackage', 'GoogleAppIndexingWarning', 'IconMissingDensityFolder'
   }
   dexOptions {
-    javaMaxHeapSize "2g"
+    javaMaxHeapSize '2g'
   }
 }
 
@@ -62,4 +62,5 @@ dependencies {
   testCompile 'junit:junit:4.12'
   testCompile 'org.mockito:mockito-core:1.10.19'
   testCompile 'org.robolectric:robolectric:3.2.2'
+  testCompile 'org.mockito:mockito-core:1.10.19'
 }

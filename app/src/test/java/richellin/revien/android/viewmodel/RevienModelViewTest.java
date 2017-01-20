@@ -1,49 +1,25 @@
-package richellin.revien.android;
+package richellin.revien.android.viewmodel;
 
-import android.os.Build;
 import android.view.View;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 import java.util.List;
 
+import richellin.revien.android.AbstractRobolectricTestCase;
 import richellin.revien.android.data.FakeSentenceAPI;
 import richellin.revien.android.data.RevienService;
 import richellin.revien.android.databinding.RevienActivityBinding;
 import richellin.revien.android.model.Sentence;
-import richellin.revien.android.viewmodel.RevienViewModel;
-import richellin.revien.android.viewmodel.RevienViewModelContract;
 import rx.schedulers.Schedulers;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
-/**
- * Notes for Mac!!
- * <p/>
- * If you are on a Mac, you will probably need to configure the
- * default JUnit test runner configuration in order to work around a bug where IntelliJ / Android
- * Studio
- * does not set the working directory to the module being tested. This can be accomplished by
- * editing
- * the run configurations, Defaults -> JUnit and changing the working directory value to
- * $MODULE_DIR$
- * <p/>
- * You have to specify  sdk < 23 (Robolectric does not support API level 23.)
- * <p/>
- * https://github.com/robolectric/robolectric/issues/1648
- **/
-
-@RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP, manifest = Config.NONE)
-public class RevienModelViewTest {
+public class RevienModelViewTest extends AbstractRobolectricTestCase {
 
   private static final int DATE_TEST = 20170114;
 
@@ -61,11 +37,11 @@ public class RevienModelViewTest {
 
     // Mock the RevienService so we don't call the Daily API (we are simulating only a call to the api)
     // and all observables will now run on the same thread
-    RevienApplication revienApplication = (RevienApplication) RuntimeEnvironment.application;
-    revienApplication.setRevienService(revienService);
-    revienApplication.setScheduler(Schedulers.immediate());
 
-    revienViewModel = new RevienViewModel(mainView, revienApplication);
+    application.setRevienService(revienService);
+    application.setScheduler(Schedulers.immediate());
+
+    revienViewModel = new RevienViewModel(mainView, application);
   }
 
   @Test public void simulateGivenTheDailyCallListFromApi() throws Exception {

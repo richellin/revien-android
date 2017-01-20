@@ -44,5 +44,4 @@ public class Sentence extends RealmObject {
     ko = en;
     en = tmp;
   }
-
 }

@@ -61,13 +61,11 @@ public class RevienViewModel implements RevienViewModelContract.ViewModel {
     revienLabel = new ObservableInt(View.VISIBLE);
     messageLabel = new ObservableField<>(context.getString(R.string.default_loading_sentence));
     sentences = new ArrayList<>();
-
-    realm = Realm.getDefaultInstance();
-
-    isRevers = SharedPrefUtil.getInt(context, Constant.REVERS);
   }
 
   public void initialize() {
+    realm = getRealm();
+    isRevers = getRevers();
     delDaily(getDiffDate(REVEN_DAY));
     initializeViews();
     getSentenceList();
@@ -96,6 +94,14 @@ public class RevienViewModel implements RevienViewModelContract.ViewModel {
       isRevers = 0;
     }
     SharedPrefUtil.setInt(context, Constant.REVERS, isRevers);
+  }
+
+  private int getRevers() {
+    return SharedPrefUtil.getInt(context, Constant.REVERS);
+  }
+
+  private Realm getRealm() {
+    return Realm.getDefaultInstance();
   }
 
   public void initializeViews() {
