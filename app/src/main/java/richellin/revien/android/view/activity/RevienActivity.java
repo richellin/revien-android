@@ -1,48 +1,59 @@
-package richellin.revien.android.view;
+package richellin.revien.android.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import io.realm.Realm;
 import java.util.List;
 
+import javax.inject.Inject;
 import richellin.revien.android.R;
+import richellin.revien.android.RevienApplication;
 import richellin.revien.android.databinding.RevienActivityBinding;
+import richellin.revien.android.di.HasComponent;
+import richellin.revien.android.di.component.ActivityComponent;
+import richellin.revien.android.di.module.ActivityModule;
 import richellin.revien.android.model.Sentence;
+import richellin.revien.android.view.adapter.SentenceAdapter;
 import richellin.revien.android.viewmodel.RevienViewModelContract;
 import richellin.revien.android.viewmodel.RevienViewModel;
 
-public class RevienActivity extends AppCompatActivity implements RevienViewModelContract.MainView {
+public class RevienActivity extends BaseActivity implements RevienViewModelContract.MainView,
+    HasComponent<ActivityComponent> {
+
   private RevienActivityBinding revienActivityBinding;
-  private RevienViewModel revienViewModel;
-  private RevienViewModelContract.MainView mainView = this;
+
+  @Inject RevienViewModel viewModel;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    getComponent().inject(this);
+
     initDataBinding();
+
+    bindViewModel(viewModel);
+
     setSupportActionBar(revienActivityBinding.toolbar);
     setupListSentenceView(revienActivityBinding.listSentence);
 
     initialize();
   }
 
-  private void initialize() {
-    revienViewModel.initialize();
+  public void initialize() {
+    viewModel.initialize();
   }
 
   private void initDataBinding() {
     revienActivityBinding = DataBindingUtil.setContentView(this, R.layout.revien_activity);
-    revienViewModel = new RevienViewModel(mainView, getContext());
-
-    revienActivityBinding.setRevienViewModel(revienViewModel);
+    revienActivityBinding.setViewModel(viewModel);
   }
 
   private void setupListSentenceView(RecyclerView listSentence) {
@@ -51,9 +62,13 @@ public class RevienActivity extends AppCompatActivity implements RevienViewModel
     listSentence.setLayoutManager(new LinearLayoutManager(this));
   }
 
+  @Override public ActivityComponent getComponent() {
+    return ((RevienApplication) getApplication()).getComponent().activityComponent(new ActivityModule(this, this));
+  }
+
   @Override protected void onDestroy() {
     super.onDestroy();
-    revienViewModel.destroy();
+    viewModel.destroy();
   }
 
   @Override public Context getContext() {

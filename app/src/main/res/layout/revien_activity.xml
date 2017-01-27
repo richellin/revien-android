@@ -8,7 +8,7 @@
   <data>
 
     <variable
-        name="revienViewModel"
+        name="viewModel"
         type="richellin.revien.android.viewmodel.RevienViewModel"
         />
   </data>
@@ -48,7 +48,7 @@
           android:id="@+id/progress_sentence"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          app:visibility="@{revienViewModel.revienProgress}"
+          app:visibility="@{viewModel.revienProgress}"
           />
 
       <TextView
@@ -56,8 +56,8 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:gravity="center"
-          android:text="@{revienViewModel.messageLabel}"
-          app:visibility="@{revienViewModel.revienLabel}"
+          android:text="@{viewModel.messageLabel}"
+          app:visibility="@{viewModel.revienLabel}"
           />
 
       <android.support.v7.widget.RecyclerView
@@ -67,7 +67,7 @@
           android:clipToPadding="false"
           android:scrollbars="vertical"
           app:layout_behavior="@string/appbar_scrolling_view_behavior"
-          app:visibility="@{revienViewModel.revienList}"
+          app:visibility="@{viewModel.revienList}"
           tools:listitem="@layout/item_sentence"
           />
 
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="@dimen/fab_margin"
-        android:onClick="@{revienViewModel::onClickRevers}"
+        android:onClick="@{viewModel::onClickRevers}"
         android:src="@drawable/ic_revers_24dp"
         />
 
@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:onClick="@{revienViewModel::onClickFabLoad}"
+        android:onClick="@{viewModel::onClickFabLoad}"
         android:src="@drawable/ic_add_24dp"
         />
 

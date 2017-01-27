@@ -13,7 +13,7 @@
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
     <activity
-        android:name=".view.RevienActivity"
+        android:name=".view.activity.RevienActivity"
         android:launchMode="singleTop"
         android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>

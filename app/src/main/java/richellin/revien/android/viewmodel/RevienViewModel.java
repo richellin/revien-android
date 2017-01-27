@@ -27,6 +27,8 @@ import richellin.revien.android.model.Daily;
 import richellin.revien.android.model.Sentence;
 import richellin.revien.android.util.Constant;
 import richellin.revien.android.util.SharedPrefUtil;
+import richellin.revien.android.view.activity.BaseActivity;
+import richellin.revien.android.viewmodel.base.ActivityViewModel;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -34,7 +36,7 @@ import rx.android.schedulers.AndroidSchedulers;
  * Created by richellin on 2017/01/09.
  */
 
-public class RevienViewModel implements RevienViewModelContract.ViewModel {
+public class RevienViewModel extends ActivityViewModel implements RevienViewModelContract.ViewModel {
   final private int REVEN_DAY = -7;
   public ObservableInt revienProgress;
   public ObservableInt revienList;
@@ -51,11 +53,10 @@ public class RevienViewModel implements RevienViewModelContract.ViewModel {
 
   private int isRevers;
 
-  public RevienViewModel(@NonNull RevienViewModelContract.MainView mainView,
-      @NonNull Context context) {
-
+  public RevienViewModel(BaseActivity activity, @NonNull RevienViewModelContract.MainView mainView) {
+    super(activity);
     this.mainView = mainView;
-    this.context = context;
+    this.context = getContext();
     revienProgress = new ObservableInt(View.GONE);
     revienList = new ObservableInt(View.GONE);
     revienLabel = new ObservableInt(View.VISIBLE);
@@ -240,5 +241,21 @@ public class RevienViewModel implements RevienViewModelContract.ViewModel {
     realm.executeTransaction((r) -> {
       dailies.deleteAllFromRealm();
     });
+  }
+
+  @Override public void onStart() {
+
+  }
+
+  @Override public void onResume() {
+
+  }
+
+  @Override public void onPause() {
+
+  }
+
+  @Override public void onStop() {
+
   }
 }

@@ -2,6 +2,7 @@ package richellin.revien.android.viewmodel;
 
 import android.view.View;
 
+import io.realm.Realm;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -9,15 +10,19 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
+import org.robolectric.Robolectric;
 import richellin.revien.android.AbstractRobolectricTestCase;
 import richellin.revien.android.data.FakeSentenceAPI;
 import richellin.revien.android.data.RevienService;
 import richellin.revien.android.databinding.RevienActivityBinding;
 import richellin.revien.android.model.Sentence;
+import richellin.revien.android.view.activity.BaseActivity;
+import richellin.revien.android.view.activity.RevienActivity;
 import rx.schedulers.Schedulers;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 public class RevienModelViewTest extends AbstractRobolectricTestCase {
 
@@ -40,8 +45,8 @@ public class RevienModelViewTest extends AbstractRobolectricTestCase {
 
     application.setRevienService(revienService);
     application.setScheduler(Schedulers.immediate());
-
-    revienViewModel = new RevienViewModel(mainView, application);
+    BaseActivity baseActivity = Robolectric.setupActivity(RevienActivity.class);
+    revienViewModel = new RevienViewModel(baseActivity, mainView);
   }
 
   @Test public void simulateGivenTheDailyCallListFromApi() throws Exception {

@@ -1,4 +1,4 @@
-package richellin.revien.android.view;
+package richellin.revien.android.view.adapter;
 
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;

@@ -2,10 +2,15 @@ package richellin.revien.android;
 
 import android.app.Application;
 import android.content.Context;
-
+import com.facebook.stetho.Stetho;
+import com.squareup.leakcanary.LeakCanary;
 import io.realm.Realm;
-import richellin.revien.android.data.RevienFactory;
+import javax.inject.Inject;
 import richellin.revien.android.data.RevienService;
+import richellin.revien.android.di.HasComponent;
+import richellin.revien.android.di.component.AppComponent;
+import richellin.revien.android.di.component.DaggerAppComponent;
+import richellin.revien.android.di.module.AppModule;
 import rx.Scheduler;
 import rx.schedulers.Schedulers;
 
@@ -13,15 +18,33 @@ import rx.schedulers.Schedulers;
  * Created by richellin on 2017/01/09.
  */
 
-public class RevienApplication extends Application {
-  private RevienService revienService;
+public class RevienApplication extends Application implements HasComponent<AppComponent> {
+  private AppComponent appComponent;
+  @Inject RevienService revienService;
   private Scheduler scheduler;
 
   @Override public void onCreate() {
     super.onCreate();
 
+    if (BuildConfig.DEBUG) {
+      if (LeakCanary.isInAnalyzerProcess(this)) {
+        return;
+      }
+      LeakCanary.install(this);
+
+      Stetho.initializeWithDefaults(this);
+    }
+
+    // build component
+    appComponent = buildAppComponent();
+
     // Initialize Realm
     initRealm();
+  }
+
+  protected AppComponent buildAppComponent() {
+    return DaggerAppComponent.builder()
+        .build();
   }
 
   private static RevienApplication get(Context context) {
@@ -33,9 +56,11 @@ public class RevienApplication extends Application {
   }
 
   public RevienService getRevienService() {
-    if (revienService == null) revienService = RevienFactory.create();
-
     return revienService;
+  }
+
+  @Override public AppComponent getComponent() {
+    return appComponent;
   }
 
   public Scheduler subscribeScheduler() {
